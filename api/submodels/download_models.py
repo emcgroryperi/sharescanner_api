@@ -65,7 +65,7 @@ class CompanyModel(models.Model):
             try:
                 company = CompanyModel.create(symbol)
             except:
-                print('Error creating company')
+                print(f'Error creating company {symbol}')
                 return
 
         # If the last date has already been downloaded then skip it
@@ -111,6 +111,18 @@ class CompanyModel(models.Model):
         companies = list(CompanyModel.objects.all())
 
         return companies
+
+    def get_market_list():
+        """Download a list of the ASX markets and return a sorted pandas dataframe"""
+
+        asx_data = pd.read_csv('https://asx.api.markitdigital.com/asx-research/1.0/companies/directory/file?access_token=83ff96335c2d45a094df02a206a39ff4')
+
+        # Sorts the data and rewrites it to a new dataframe sorted by market capitilisation
+        # Top 200 markets will represent the ASX 200 etc...
+        asx_sorted = asx_data.sort_values(["Market Cap"], ascending=False)[0:200]
+        asx_sorted = asx_sorted.reset_index()
+
+        return asx_sorted
 
 
 
