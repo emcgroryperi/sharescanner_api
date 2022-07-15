@@ -85,7 +85,7 @@ class CompanyModel(models.Model):
         company.save()
 
         HistoricalPrices.bulk_create(updated_data, symbol)
-
+        print(f'{symbol} successfully updated')
         return
 
     

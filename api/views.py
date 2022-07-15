@@ -14,7 +14,7 @@ def company(request, company):
 
     result = {}
     result['company'] = CompanyModel.get(company)
-    result['data'] = result['company'].get_data('2022-04-01')
+    result['data'] = result['company'].get_data('2021-04-01')
 
     output = CompanyDataSerializer(result)
 
