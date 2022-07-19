@@ -4,7 +4,7 @@ import json
 from django.contrib.auth.models import User
 from django.db import models
 
-from .download_models import CompanyModel
+from .company import CompanyModel
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

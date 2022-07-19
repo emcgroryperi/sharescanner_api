@@ -1,4 +1,4 @@
-from api.submodels import download_models
+from api.submodels import company, price, profile
 
 
 

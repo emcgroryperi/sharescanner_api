@@ -1,6 +1,6 @@
 from rest_framework import routers, serializers, viewsets
-from .submodels.download_models import CompanyModel, HistoricalPrices
-
+from .submodels.company import CompanyModel
+from .submodels.price import HistoricalPrices
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

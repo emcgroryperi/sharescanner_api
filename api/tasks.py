@@ -1,6 +1,6 @@
 from celery import shared_task
 
-from .submodels.download_models import CompanyModel
+from .submodels.company import CompanyModel
 
 
 

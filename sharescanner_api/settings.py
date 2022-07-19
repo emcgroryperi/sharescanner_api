@@ -86,15 +86,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'CONN_MAX_AGE': 0,
-        'NAME': 'ilvfdrib',                      
-        'USER': 'ilvfdrib',
-        'PASSWORD': '0e5P0rlLDv2hXxv2-I-v-cL0AWOxt8fO',
+        'NAME': 'gdgbsqfs',                      
+        'USER': 'gdgbsqfs',
+        'PASSWORD': '7rFjGQGjWQUXcWiaE4uFdr13VsO2_acV',
         'HOST': 'topsy.db.elephantsql.com',
     }
 }
 
 
-DATABASE_URL = 'postgres://ilvfdrib:0e5P0rlLDv2hXxv2-I-v-cL0AWOxt8fO@topsy.db.elephantsql.com/ilvfdrib'
+DATABASE_URL = 'postgres://gdgbsqfs:7rFjGQGjWQUXcWiaE4uFdr13VsO2_acV@topsy.db.elephantsql.com/gdgbsqfs'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

@@ -1,7 +1,8 @@
+from time import sleep
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .submodels.download_models import CompanyModel
+from .submodels.company import CompanyModel
 import pandas as pd
 from .serializers import CompanySerializer, CompanyDataSerializer
 
@@ -14,7 +15,11 @@ def company(request, company):
 
     result = {}
     result['company'] = CompanyModel.get(company)
-    result['data'] = result['company'].get_data('2021-04-01')
+    result['data'] = result['company'].get_data('2022-01-01')
+
+    from .analysis import ema_crossovers
+
+    ema_crossovers(company,10,50)
 
     output = CompanyDataSerializer(result)
 
@@ -39,10 +44,18 @@ def companies(request):
 
 
 def update_companies(request):
+
+    # CompanyModel.objects.all().delete()
+    # print('deleting')
+    # sleep(10)
+    # print('resuming')
+    
     companies = CompanyModel.get_market_list()
+
 
     for company in companies['ASX code']:
         update_company.delay(company + '.AX')
+    # CompanyModel.update_data('CBA.AX')
 
     return JsonResponse('updating all companies', safe=False)
 
