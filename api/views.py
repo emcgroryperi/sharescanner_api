@@ -17,9 +17,9 @@ def company(request, company):
     result['company'] = CompanyModel.get(company)
     result['data'] = result['company'].get_data('2022-01-01')
 
-    from .analysis import ema_crossovers
+    from .analysis import identify_ema_crossovers
 
-    ema_crossovers(company,10,50)
+    identify_ema_crossovers()
 
     output = CompanyDataSerializer(result)
 

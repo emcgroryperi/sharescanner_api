@@ -1,6 +1,6 @@
 from calendar import week
 from django.db import models
-from datetime import datetime, timedelta, tzinfo
+from datetime import date, datetime, timedelta, tzinfo
 
 from django.utils import timezone
 
@@ -72,12 +72,12 @@ class CompanyModel(models.Model):
                 print(f'Error creating company {symbol}')
                 print(e)
                 return
-        company.last_updated = datetime(year=2022, month=7,day=13)
-        # # If the last date has already been downloaded then skip it
-        # if (timezone.now() - company.last_updated).days == 0:
-        #     print(f"{symbol} up to date")
-        #     return
-        print(company.last_updated)
+
+        # If the last date has already been downloaded then skip it
+        if (timezone.now() - company.last_updated).days == 0:
+            print(f"{symbol} up to date")
+            return
+
         print('Downloading data')
 
         # Download from one day after the last day
@@ -120,7 +120,7 @@ class CompanyModel(models.Model):
 
     
     @staticmethod
-    def retrieve_company_list():
+    def get_company_list():
 
         companies = list(CompanyModel.objects.all())
 

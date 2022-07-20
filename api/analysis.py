@@ -11,7 +11,7 @@ pd.set_option('display.max_rows', None)
 minimum_time = 60
 
 # Gets the EMA of the company over a specified period of the last two months
-def get_ema(company_symbol, period):
+def get_ema(company_symbol, period=20):
     date = (datetime.now() - timedelta(days=minimum_time+period)).strftime('%Y-%m-%d')
     data = CompanyModel.get(company_symbol).get_df()
     ema = ta.ema(data['close'], period)
@@ -22,7 +22,7 @@ def get_ema(company_symbol, period):
     return df
 
 # Gets the bbands of the last two months
-def get_bbands(company_symbol, period, std):
+def get_bbands(company_symbol, period=20, std=2):
     date = (datetime.now() - timedelta(days=minimum_time+period)).strftime('%Y-%m-%d')
     data = CompanyModel.get(company_symbol).get_df(date)
     bbands = ta.bbands(data['close'], period, std)
@@ -39,4 +39,19 @@ def ema_crossovers(company_symbol, short, long):
     diff = pd.DataFrame()
     diff['diff'] = comparison.diff()
     diff['date'] = long_ema['date'][(long_length-minimum_time):].reset_index(drop=True)
-    print(diff[1:][(diff[1:]['diff'] != 0) ])    
+    crossovers = diff[1:][(diff[1:]['diff'] == 1) ]    
+
+    return crossovers
+
+def identify_ema_crossovers(age=7, short=10, long=50):
+    companies = CompanyModel.get_company_list()
+    crossovers = pd.DataFrame(columns=['diff', 'date', 'company'])
+    age = 3
+    for company in companies:
+        cross = ema_crossovers(company.symbol, short, long)
+        if len(cross) != 0:
+            recent_crosses = cross[cross['date'] > (datetime.now() - timedelta(age)).date()].copy()
+            recent_crosses['company'] = company.symbol
+            crossovers = pd.concat([crossovers,recent_crosses], ignore_index=True)
+
+    print(crossovers)
