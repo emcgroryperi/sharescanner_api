@@ -18,3 +18,4 @@ class CompanyDataSerializer(serializers.Serializer):
     company = CompanySerializer()
     data = HistoricalPricesSerializer(many=True)
     
+

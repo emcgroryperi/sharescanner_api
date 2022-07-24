@@ -17,10 +17,7 @@ def company(request, company):
     result['company'] = CompanyModel.get(company)
     result['data'] = result['company'].get_data('2022-01-01')
 
-    from .analysis import identify_ema_crossovers
-
-    identify_ema_crossovers()
-
+    
     output = CompanyDataSerializer(result)
 
     return JsonResponse(output.data)
@@ -44,25 +41,26 @@ def companies(request):
 
 
 def update_companies(request):
-
-    # CompanyModel.objects.all().delete()
-    # print('deleting')
-    # sleep(10)
-    # print('resuming')
     
     companies = CompanyModel.get_market_list()
 
-
     for company in companies['ASX code']:
         update_company.delay(company + '.AX')
-    # CompanyModel.update_data('CBA.AX')
 
     return JsonResponse('updating all companies', safe=False)
 
 
+def get_ema_crossovers(request): 
+
+    # if request.method != 'POST':
+    #     return JsonResponse('error', safe=False)
 
 
-    
+    from .analysis import identify_ema_crossovers
+
+    crossovers = identify_ema_crossovers()
+
+    return JsonResponse(crossovers.to_json(orient='split', date_format='iso'), safe=False)
 
 
     

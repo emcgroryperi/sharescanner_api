@@ -46,7 +46,7 @@ def ema_crossovers(company_symbol, short, long):
 def identify_ema_crossovers(age=7, short=10, long=50):
     companies = CompanyModel.get_company_list()
     crossovers = pd.DataFrame(columns=['diff', 'date', 'company'])
-    age = 3
+    age = 7
     for company in companies:
         cross = ema_crossovers(company.symbol, short, long)
         if len(cross) != 0:
@@ -54,4 +54,4 @@ def identify_ema_crossovers(age=7, short=10, long=50):
             recent_crosses['company'] = company.symbol
             crossovers = pd.concat([crossovers,recent_crosses], ignore_index=True)
 
-    print(crossovers)
+    return crossovers
