@@ -17,7 +17,7 @@ def company(request, company):
     result['company'] = CompanyModel.get(company)
     result['data'] = result['company'].get_data('2022-01-01')
 
-    
+
     output = CompanyDataSerializer(result)
 
     return JsonResponse(output.data)
@@ -50,17 +50,37 @@ def update_companies(request):
     return JsonResponse('updating all companies', safe=False)
 
 
-def get_ema_crossovers(request): 
+def perform_market_scan(request): 
 
     # if request.method != 'POST':
     #     return JsonResponse('error', safe=False)
 
 
-    from .analysis import identify_ema_crossovers
+    
+    from .analysis import market_scan
 
-    crossovers = identify_ema_crossovers()
 
-    return JsonResponse(crossovers.to_json(orient='split', date_format='iso'), safe=False)
+    indicators = [
+        {
+            "key": "EMA_10_50",
+            "filter": "EMA crossover",
+            "short_ema": "10",
+            "long_ema": "50"
+        },
+        {
+            "key": "EMA_8_20",
+            "filter": "EMA crossover",
+            "short_ema": "8",
+            "long_ema": "20"
+        },
+        {
+            "key": "volume",
+            "filter": "Volume Peaks"
+        }
+    ]
+    flags = market_scan(indicators)
+
+    return JsonResponse(flags.to_json(orient='split', date_format='iso'), safe=False)
 
 
     
