@@ -1,7 +1,3 @@
-from genericpath import exists
-
-from matplotlib.pyplot import flag
-
 from api.submodels.price import HistoricalPrices
 from .submodels.company import CompanyModel
 
