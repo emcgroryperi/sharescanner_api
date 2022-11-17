@@ -83,7 +83,7 @@ def recent_volume_peaks(company_symbol, data, max_age=7):
 
  
 def market_scan(indicators):
-    companies = CompanyModel.get_company_list()
+    companies = CompanyModel.get_company_list()[0:50]
     flags = pd.DataFrame(columns=['company', 'date', 'info','info_label', 'type', 'filter'])
     age = 7
     result = pd.DataFrame(columns=['company', 'date', 'info', 'info_label', 'type'])
@@ -93,15 +93,12 @@ def market_scan(indicators):
 
         for indicator in indicators:
             if indicator['filter'] == 'EMA crossover':
-
                 result = recent_ema_crossovers(company.symbol, 
                                         company_data, 
                                         short_ema=int(indicator['short_ema']), 
                                         long_ema=int(indicator['long_ema']))
                 result['filter'] = indicator['key']
-                
             if indicator['filter'] == 'Volume Peaks':
-
                 result = recent_volume_peaks(company.symbol, company_data)
                 result['filter'] = indicator['key']
             if len(result.index) != 0:

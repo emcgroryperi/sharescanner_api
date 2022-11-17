@@ -26,13 +26,10 @@ SECRET_KEY = 'django-insecure-wytp%z_(mb02e5g@1jzlqt$*gawv3$by^(6p7rcd5rmcht0rk9
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'http://127.0.0.1:8080',
+    '127.0.0.1',
     'localhost',
     '192.168.86.50'
 ]
-
-
-
 
 # Application definition
 
@@ -45,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'rest_framework.auth_token',
     'corsheaders',
     'djoser'
 ]
@@ -61,7 +57,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:8080', 'http://127.0.0.1:8080']
+CORS_ALLOWED_ORIGINS = ['http://localhost:8080', 'http://127.0.0.1:8080',
+'http://localhost:8081', 'http://127.0.0.1:8081']
 
 ROOT_URLCONF = 'sharescanner_api.urls'
 

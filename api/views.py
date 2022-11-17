@@ -2,9 +2,12 @@ from time import sleep
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from rest_framework.decorators import api_view
+
 from .submodels.company import CompanyModel
 import pandas as pd
 from .serializers import CompanySerializer, CompanyDataSerializer
+
 
 from .tasks import update_company
 
@@ -49,38 +52,14 @@ def update_companies(request):
 
     return JsonResponse('updating all companies', safe=False)
 
-
+@api_view(['POST'])
 def perform_market_scan(request): 
-
-    if request.method == 'POST':
-        print(request.POST)
-        # return JsonResponse('error', safe=False)
-
-   
+       
     from .analysis import market_scan
+    indicators = request.data['indicators']
+    print(indicators)
 
-    indicators = [
-        {
-            "key": "EMA_10_50",
-            "filter": "EMA crossover",
-            "short_ema": "10",
-            "long_ema": "50"
-        },
-        {
-            "key": "EMA_8_20",
-            "filter": "EMA crossover",
-            "short_ema": "8",
-            "long_ema": "20"
-        },
-        {
-            "key": "volume",
-            "filter": "Volume Peaks"
-        }
-    ]
-    # indicators = 
-
-    # flags = market_scan(indicators)
-    flags = pd.DataFrame(columns=['company', 'date', 'info','info_label', 'type', 'filter'])
+    flags = market_scan(indicators)
 
     return JsonResponse(flags.to_json(orient='split', date_format='iso'), safe=False)
 
