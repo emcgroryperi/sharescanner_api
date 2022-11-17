@@ -26,10 +26,12 @@ SECRET_KEY = 'django-insecure-wytp%z_(mb02e5g@1jzlqt$*gawv3$by^(6p7rcd5rmcht0rk9
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'http://127.0.0.1:8080',
     'localhost',
-'192.168.86.50'
-
+    '192.168.86.50'
 ]
+
+
 
 
 # Application definition
@@ -43,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'corsheaders'
+    'rest_framework.auth_token',
+    'corsheaders',
+    'djoser'
 ]
 
 MIDDLEWARE = [
@@ -55,8 +59,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:8080', 'http://127.0.0.1:8080']
 
 ROOT_URLCONF = 'sharescanner_api.urls'
 
@@ -151,4 +156,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+

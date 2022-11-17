@@ -52,13 +52,12 @@ def update_companies(request):
 
 def perform_market_scan(request): 
 
-    # if request.method != 'POST':
-    #     return JsonResponse('error', safe=False)
+    if request.method == 'POST':
+        print(request.POST)
+        # return JsonResponse('error', safe=False)
 
-
-    
+   
     from .analysis import market_scan
-
 
     indicators = [
         {
@@ -78,9 +77,15 @@ def perform_market_scan(request):
             "filter": "Volume Peaks"
         }
     ]
-    flags = market_scan(indicators)
+    # indicators = 
+
+    # flags = market_scan(indicators)
+    flags = pd.DataFrame(columns=['company', 'date', 'info','info_label', 'type', 'filter'])
 
     return JsonResponse(flags.to_json(orient='split', date_format='iso'), safe=False)
 
-
+import django
+def get_csrf_token(request):
+    token = django.middleware.csrf.get_token(request)
+    return JsonResponse({'token': token})
     

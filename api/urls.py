@@ -7,5 +7,6 @@ urlpatterns = [
     path('companies/', views.companies),
     path('update/', views.update),
     path('update_companies/', views.update_companies),
-    path('ema_crossovers/', views.perform_market_scan),
+    path('scan_market/', views.perform_market_scan),
+    path('get_csrf_token/', views.get_csrf_token),
 ]
