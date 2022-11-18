@@ -60,7 +60,7 @@ def volume_peaks(data):
     vol_std = np.std(data['volume'])
     vol_mean = np.mean(data['volume'])
 
-    volume_peaks = data[data['volume'] > (vol_mean + 2.5*vol_std)][['volume', 'date']]
+    volume_peaks = data[data['volume'] > (vol_mean + 3*vol_std)][['volume', 'date']]
     
     volume_peaks['strength'] = (volume_peaks['volume']-vol_mean) / vol_std
 
@@ -83,7 +83,7 @@ def recent_volume_peaks(company_symbol, data, max_age=7):
 
  
 def market_scan(indicators):
-    companies = CompanyModel.get_company_list()[0:50]
+    companies = CompanyModel.get_company_list()
     flags = pd.DataFrame(columns=['company', 'date', 'info','info_label', 'type', 'filter'])
     age = 7
     result = pd.DataFrame(columns=['company', 'date', 'info', 'info_label', 'type'])
