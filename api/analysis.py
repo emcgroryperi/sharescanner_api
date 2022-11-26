@@ -72,15 +72,33 @@ def recent_volume_peaks(company_symbol, data, max_age=7):
     company_peak['company'] = company_symbol
 
     recent_peaks = company_peak[company_peak['date'] > (datetime.now() - timedelta(max_age)).date()].copy()
-    # print(company_peak)
-    
-    # print('trying something?')
+
     recent_peaks['info'] = recent_peaks['strength']
     recent_peaks['info_label'] = 'standard deviations above mean'
     recent_peaks['type'] = 'volume'
     return recent_peaks[['company','date','info', 'info_label', 'type']]
 
 
+def recent_rsi_crosses(company_symbol, data, max_age=7):
+    rsi = ta.rsi(data['close'])
+
+    rsi_crosses = data[['date']].copy()
+    rsi_crosses['rsi'] = rsi
+
+    rsi_crosses['company'] = company_symbol
+
+    overbought = rsi_crosses[(rsi_crosses['rsi'] > 70)].copy()
+    overbought['info'] = overbought['rsi']
+    oversold = rsi_crosses[rsi_crosses['rsi'] < 30].copy()
+    oversold['info'] = oversold['rsi']
+
+    recent_rsi_crosses = pd.concat([overbought, oversold], ignore_index=True)
+    recent_rsi_crosses['type'] = 'rsi'
+    recent_rsi_crosses['info_label'] = 'Overbought or Oversold'
+
+    rsis = recent_rsi_crosses[recent_rsi_crosses['date'] > (datetime.now() - timedelta(max_age)).date()].copy()
+
+    return rsis[['company','date','info', 'info_label', 'type']]
  
 def market_scan(indicators):
     companies = CompanyModel.get_company_list()
@@ -103,8 +121,11 @@ def market_scan(indicators):
             if indicator['filter'] == 'Volume Peaks':
                 result = recent_volume_peaks(company.symbol, company_data, max_age=age)
                 result['filter'] = indicator['key']
-            if len(result.index) != 0:
-                flags = pd.concat([flags, result], ignore_index=True)
+            if indicator['filter'] == 'RSI thresholds':
+                result = recent_rsi_crosses(company.symbol, company_data, max_age=age)
+                result['filter'] = indicator['key']
+        if len(result.index) != 0:
+            flags = pd.concat([flags, result], ignore_index=True)
 
     flags = flags.drop_duplicates(ignore_index=True)
     
@@ -113,39 +134,3 @@ def market_scan(indicators):
     return flags
 
 
-
-
-
-
-
-# def identify_ema_crossovers(age=7, short=10, long=50):
-#     companies = CompanyModel.get_company_list()
-#     crossovers = pd.DataFrame(columns=['date', 'company', 'info'])
-#     # age = 7
-#     # for company in companies:
-#     #     cross = ema_crossovers(company.symbol, short, long)
-#     #     if len(cross) != 0:
-#     #         recent_crosses = cross[cross['date'] > (datetime.now() - timedelta(age)).date()].copy()
-#     #         recent_crosses['company'] = company.symbol
-#     #         crossovers = pd.concat([crossovers,recent_crosses[['company', 'date', 'diff']]], ignore_index=True)
-# return crossovers
-
-
-# def identify_volume_peaks(age=7):
-#     companies = CompanyModel.get_company_list()
-#     peaks = pd.DataFrame(columns=['date', 'company', 'strength'])
-#     age = 7
-
-#     # for company in companies:
-#     #     company_peak = volume_peaks(company.symbol, period=age)
-#     #     company_peak['company'] = company.symbol
-
-#     #     if len(company_peak) != 0:
-#     #         recent_peaks = company_peak[company_peak['date'] > (datetime.now() - timedelta(age)).date()].copy()
-#     #         peaks = pd.concat([peaks,recent_peaks], ignore_index=True, verify_integrity=True)
-
-#     # peaks = peaks.drop_duplicates(ignore_index=True)[['company', 'date', 'volume', 'strength']]
-    
-#     print(peaks)
-
-#     return peaks
