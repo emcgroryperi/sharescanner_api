@@ -106,7 +106,6 @@ def market_scan(indicators):
     age = 7
     result = pd.DataFrame(columns=['company', 'date', 'info', 'info_label', 'type'])
     for company in companies:
-
         company_data = CompanyModel.get(company.symbol).get_df()
 
         for indicator in indicators:
