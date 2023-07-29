@@ -11,16 +11,19 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+import os 
+os.environ['FRONTEND_URL'] = '192.168.86.223:8080'
+os.environ['REDIS_URL'] = '192.168.86.223:6379'
+os.environ['SECRET_KEY'] = 'django-insecure-wytp%z_(mb02e5g@1jzlqt$*gawv3$by^(6p7rcd5rmcht0rk9'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wytp%z_(mb02e5g@1jzlqt$*gawv3$by^(6p7rcd5rmcht0rk9'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -28,7 +31,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    '192.168.86.50'
+    '192.168.86.50',
+    os.environ.get('FRONTEND_URL').split(':')[0]
 ]
 
 # Application definition
@@ -58,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:8080', 'http://127.0.0.1:8080',
-'http://localhost:8081', 'http://127.0.0.1:8081', 'http://192.168.86.50:8080']
+'http://localhost:8081', 'http://127.0.0.1:8081', 'http://192.168.86.50:8080', f'http://{os.environ.get("FRONTEND_URL")}']
 
 ROOT_URLCONF = 'sharescanner_api.urls'
 
@@ -122,8 +126,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+BROKER_URL = f'redis://{os.environ.get("REDIS_URL")}'
+CELERY_RESULT_BACKEND = f'redis://{os.environ.get("REDIS_URL")}'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
