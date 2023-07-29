@@ -11,4 +11,6 @@ def update_company(symbol):
     CompanyModel.update_data(symbol)
 
 
+
+
 # def identify_ema_crossovers():
