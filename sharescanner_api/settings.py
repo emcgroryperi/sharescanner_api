@@ -16,8 +16,10 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 import os 
-os.environ['FRONTEND_URL'] = '192.168.86.223:8080'
-os.environ['REDIS_URL'] = '192.168.86.223:6379'
+# os.environ['FRONTEND_URL'] = '172.17.0.10:8080'
+# os.environ['REDIS_URL'] = '172.17.0.4:6379'
+os.environ['FRONTEND_URL'] = 'sharescanner_client:8080'
+os.environ['REDIS_URL'] = 'sharescanner_redis:6379'
 os.environ['SECRET_KEY'] = 'django-insecure-wytp%z_(mb02e5g@1jzlqt$*gawv3$by^(6p7rcd5rmcht0rk9'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -31,7 +33,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    '192.168.86.50',
+    '192.168.86.248',
     os.environ.get('FRONTEND_URL').split(':')[0]
 ]
 
@@ -62,7 +64,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:8080', 'http://127.0.0.1:8080',
-'http://localhost:8081', 'http://127.0.0.1:8081', 'http://192.168.86.50:8080', f'http://{os.environ.get("FRONTEND_URL")}']
+'http://localhost:8081', 'http://192.168.86.248:8081', 'http://192.168.86.248:8080', f'http://{os.environ.get("FRONTEND_URL")}']
 
 ROOT_URLCONF = 'sharescanner_api.urls'
 

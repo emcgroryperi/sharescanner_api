@@ -84,7 +84,7 @@ def recent_rsi_crosses(company_symbol, data, max_age=7):
 
     rsi_crosses = data[['date']].copy()
     rsi_crosses['rsi'] = rsi
-
+    
     rsi_crosses['company'] = company_symbol
 
     overbought = rsi_crosses[(rsi_crosses['rsi'] > 70)].copy()
@@ -92,14 +92,39 @@ def recent_rsi_crosses(company_symbol, data, max_age=7):
     oversold = rsi_crosses[rsi_crosses['rsi'] < 30].copy()
     oversold['info'] = oversold['rsi']
 
-    recent_rsi_crosses = pd.concat([overbought, oversold], ignore_index=True)
+    recent_rsi_crosses = oversold ## pd.concat([overbought, oversold], ignore_index=True)
     recent_rsi_crosses['type'] = 'rsi'
-    recent_rsi_crosses['info_label'] = 'Overbought or Oversold'
+    recent_rsi_crosses['info_label'] = 'Oversold'
 
     rsis = recent_rsi_crosses[recent_rsi_crosses['date'] > (datetime.now() - timedelta(max_age)).date()].copy()
 
     return rsis[['company','date','info', 'info_label', 'type']]
  
+
+def recent_bband_crosses(company_symbol, data, max_age=7):
+    bbands = get_bbands(data)
+    # bbands['date'] = bbands.index
+    try:
+        lower_bband = bbands['BBL_20_2.0']
+    except Exception as e:
+        # No data so return empty?
+        return pd.DataFrame(columns=['company', 'date', 'info', 'info_label', 'type'])
+    lower_length = len(lower_bband)
+    close = data['close']
+    close_length = len(close)
+    comparison = pd.Series(np.where(close[(close_length-minimum_time):].reset_index(drop=True) > lower_bband[(lower_length-minimum_time):].reset_index(drop=True), 1.0, 0.0))
+    # print(comparison)
+    diff = pd.DataFrame()
+    diff['info'] = comparison.diff()
+    diff['date'] = data['date'][(lower_length-minimum_time):].reset_index(drop=True)
+    crossovers = diff[1:][(diff[1:]['info'] == 1) ]    
+    
+    recent_results = crossovers[crossovers['date'] > (datetime.now() - timedelta(max_age)).date()].copy()
+    recent_results['company'] = company_symbol
+    recent_results['type'] = 'lower_bband_crosses'
+    recent_results['info_label'] = 'Lower Bollinger Band Crossing'
+    return recent_results[['company','date','info', 'info_label', 'type']]
+
 def market_scan(indicators):
     companies = CompanyModel.get_company_list()
     flags = pd.DataFrame(columns=['company', 'date', 'info','info_label', 'type', 'filter'])
@@ -107,22 +132,33 @@ def market_scan(indicators):
     result = pd.DataFrame(columns=['company', 'date', 'info', 'info_label', 'type'])
     for company in companies:
         company_data = CompanyModel.get(company.symbol).get_df()
+        if (company_data['close'] < 0.5 ).any():
+            continue 
+        # print(company_data)
 
         for indicator in indicators:
             age = indicator['age'] if 'age' in indicator.keys() else 7
             if indicator['filter'] == 'EMA crossover':
-                result = recent_ema_crossovers(company.symbol, 
+                tempresult = recent_ema_crossovers(company.symbol, 
                                         company_data, 
                                         age=age,
                                         short_ema=int(indicator['short_ema']), 
                                         long_ema=int(indicator['long_ema']))
-                result['filter'] = indicator['key']
+                tempresult['filter'] = indicator['key']
+                result = pd.concat([result, tempresult], ignore_index=True)
             if indicator['filter'] == 'Volume Peaks':
-                result = recent_volume_peaks(company.symbol, company_data, max_age=age)
-                result['filter'] = indicator['key']
-            if indicator['filter'] == 'RSI thresholds':
-                result = recent_rsi_crosses(company.symbol, company_data, max_age=age)
-                result['filter'] = indicator['key']
+                tempresult = recent_volume_peaks(company.symbol, company_data, max_age=age)
+                tempresult['filter'] = indicator['key']
+                result = pd.concat([result, tempresult], ignore_index=True)
+            if indicator['filter'] == 'RSI Thresholds':
+                tempresult = recent_rsi_crosses(company.symbol, company_data, max_age=age)
+                tempresult['filter'] = indicator['key']
+                result = pd.concat([result, tempresult], ignore_index=True)
+            if indicator['filter'] == 'Bollinger Bands':
+                tempresult = recent_bband_crosses(company.symbol, company_data, max_age=age)
+                tempresult['filter'] = indicator['key']
+                result = pd.concat([result, tempresult], ignore_index=True)
+
         if len(result.index) != 0:
             flags = pd.concat([flags, result], ignore_index=True)
 
